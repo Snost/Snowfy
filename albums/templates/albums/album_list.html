@@ -1,0 +1,147 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8" />
+    <title>❄️ Усі альбоми - Snowfy</title>
+    <link rel="stylesheet" href="{% static 'albums/style.css' %}">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #d08df5b3;
+            color: #fff;
+        }
+
+        header {
+            background-color: #411db983;
+            padding: 30px 20px;
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .auth-info {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+
+        .auth-info a {
+            color: #351f7eef;
+            text-decoration: none;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        .albums-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 40px;
+        }
+
+        .album-card {
+            background-color: #c9cbe188;
+            border-radius: 14px;
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.3s;
+            box-shadow: 0 0 15px rgba(0,0,0,0.4);
+            text-align: center; /* центрування всього в карточці */
+            
+        }
+
+        .album-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 25px rgba(0,0,0,0.7);
+        }
+
+        .album-card img {
+            width: 100%;
+            height: 340px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .album-card h3 {
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-size: 22px;
+            color: #ffffff;
+        }
+
+        .album-card p {
+            margin: 0;
+            font-size: 18px;
+            color: #f1ececb7;
+        }
+
+        .album-card a {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 18px;
+            color: #faf7f7;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .album-card a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <header>❄️🎧 Snowfy — Колекція альбомів</header>
+
+    <div class="container">
+        <div class="auth-info">
+            {% if user.is_authenticated %}
+                Вітаємо, <strong>{{ user.username }}</strong>!
+                <a href="{% url 'logout' %}">Вийти</a>
+                <a href="{% url 'my_music' %}">👤 Моя музика</a>
+            {% else %}
+                <a href="{% url 'login' %}">Увійти</a>
+            {% endif %}
+        </div>
+
+        {% if albums %}
+            <div class="albums-grid">
+                {% for album in albums %}
+                <div class="album-card">
+                    {% if album.cover %}
+                        <a href="{% url 'album_detail' album.id %}">
+                            <img src="{{ album.cover }}" alt="Обкладинка" />
+                        </a>
+                    {% endif %}
+                    <h3>
+                        <a href="{% url 'album_detail' album.id %}">
+                            {{ album.title }} — {{ album.artist.name }}
+                        </a>
+                    </h3>
+                    <p>Рік: {{ album.year }}</p>
+                    {% if user.is_authenticated %}
+    {% if album.id in favorite_album_ids %}
+        <a href="{% url 'remove_from_favorites' album.id %}" style="color: #ff5e5e;">⛔ Видалити з улюбленого</a>
+    {% else %}
+        <a href="{% url 'add_to_favorites' album.id %}">❄️ Додати в улюблене</a>
+    {% endif %}
+{% endif %}
+
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="text-align:center; margin-top: 50px;">Немає альбомів.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

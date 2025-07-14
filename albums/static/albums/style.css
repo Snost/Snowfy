@@ -1,0 +1,68 @@
+/* Snowfy — стилі в блакитних тонах */
+
+body {
+    background: linear-gradient(to right, #d7def3, #3f2b96);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #e0e7ff;
+    margin: 0;
+    padding: 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+a {
+    color:  #351f7eef;
+    text-decoration: none;
+    font-weight: 600;
+    
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.album-detail {
+    display: flex;
+    gap: 30px;
+}
+
+.album-cover {
+    width: 300px;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+}
+
+.tracks {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 600px;
+}
+
+.track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.track h3 {
+    margin: 0 0 10px 0;
+}
+
+audio {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.lyrics {
+    white-space: pre-wrap;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: #cddafd;
+}

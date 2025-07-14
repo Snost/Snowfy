@@ -1,0 +1,171 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8" />
+    <title>{{ album.title }} - Snowfy</title>
+    <link rel="stylesheet" href="{% static 'albums/style.css' %}">
+    <style>
+        
+        
+        body {
+            margin: 0;
+            padding: 40px; 
+            font-family: Arial, sans-serif;
+            background-color: #fff;
+        }
+
+        .album-detail {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            /* ширина всю доступну ширину екрану мінус відступи body */
+            width: calc(100vw - 40px);
+        }
+
+        .album-cover {
+            width: 600px;
+            height: 600px;
+            object-fit: cover;
+            border-radius: 4px;
+            flex-shrink: 0;
+            margin: 0;
+        }
+
+        .tracks-container {
+            flex: 1;
+            min-width: 0;
+            max-width: 600px;
+            padding-left: 10px;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+
+        li {
+            position: relative;
+            min-height: 130px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #007BFF;
+            padding-bottom: 10px;
+        }
+
+        .lyrics {
+            display: none;
+            white-space: pre-wrap;
+            background: #f9f9f9f3;
+            border: 1px solid #ddd;
+            color:rgba(0, 0, 0, 0.371);
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow-wrap: break-word;
+            
+        }
+
+        .toggle-lyrics-btn {
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            margin-top: 5px;
+            font-size: 14px;
+            user-select: none;
+        }
+
+        .toggle-lyrics-btn:hover {
+            background-color: #0056b3;
+        }
+
+        header {
+            max-width: calc(100vw - 40px);
+            margin: 0 auto 20px auto;
+            padding: 0;
+            color:whitesmoke;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>{{ album.title }} — {{ album.artist.name }}</h1>
+      <p><a href="{% url 'album_list' %}" class="back-link">⬅️ Повернутись до списку альбомів</a> | <a href="{% url 'logout' %}" class="back-link">Вийти</a></p>
+
+</header>
+
+<div class="album-detail">
+    <img src="{{ album.cover }}" alt="Обкладинка" class="album-cover" />
+
+    <div class="tracks-container">
+        <h2>Пісні:</h2>
+        <ul>
+            {% for track in album.tracks.all %}
+            <li>
+                <div class="track-main-content">
+                    <h3>{{ track.title }}</h3>
+                    <audio id="audio-{{ forloop.counter }}" controls preload="metadata" ontimeupdate="updateTime(this)">
+                        <source src="{{ track.audio_file.url }}" type="audio/mpeg" />
+                        Твій браузер не підтримує відтворення аудіо.
+                    </audio>
+
+                    <div>
+                        <b>Час:</b>
+                        <span id="current-time-{{ forloop.counter }}">0:00</span> /
+                        <span id="duration-{{ forloop.counter }}">0:00</span>
+                    </div>
+
+                    <button class="toggle-lyrics-btn" type="button">Показати текст</button>
+                </div>
+
+                <pre class="lyrics">{{ track.lyrics }}</pre>
+            </li>
+            {% empty %}
+                <li>Пісні відсутні</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<script>
+function formatTime(seconds) {
+    const min = Math.floor(seconds / 60);
+    const sec = Math.floor(seconds % 60).toString().padStart(2, '0');
+    return `${min}:${sec}`;
+}
+
+function updateTime(audio) {
+    const id = audio.id.split('-')[1];
+    const currentTimeSpan = document.getElementById(`current-time-${id}`);
+    const durationSpan = document.getElementById(`duration-${id}`);
+
+    currentTimeSpan.textContent = formatTime(audio.currentTime);
+    if(audio.duration) {
+        durationSpan.textContent = formatTime(audio.duration);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.toggle-lyrics-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const li = button.closest('li');
+            const lyrics = li.querySelector('.lyrics');
+
+            if (lyrics.style.display === 'none' || lyrics.style.display === '') {
+                lyrics.style.display = 'block';
+                button.textContent = 'Сховати текст';
+            } else {
+                lyrics.style.display = 'none';
+                button.textContent = 'Показати текст';
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>
